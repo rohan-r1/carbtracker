@@ -87,3 +87,6 @@ class MealResponse(BaseModel):
 
     class Config:
         from_attributes = True
+        json_encoders = {
+            datetime: lambda v: v.isoformat() + 'Z' if v else None
+        }

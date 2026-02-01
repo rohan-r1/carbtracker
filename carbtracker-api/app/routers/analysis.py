@@ -305,6 +305,16 @@ async def finalize_estimate(
     # Update analysis with final estimate
     analysis.final_estimate = adjusted_carbs
 
+    # Generate meal description from foods if not already set
+    meal = db.query(Meal).filter(Meal.id == analysis.meal_id).first()
+    if meal and not meal.description:
+        # Create description from selected foods (max 6 words)
+        food_names = [f.name for f in selected_foods]
+        description = ", ".join(food_names[:3])  # Take first 3 foods
+        if len(food_names) > 3:
+            description += f" +{len(food_names) - 3} more"
+        meal.description = description
+
     # Store quick-tap answers
     for answer in request.quick_tap_answers:
         question = db.query(QuickTapQuestion).filter(QuickTapQuestion.id == answer.question_id).first()
