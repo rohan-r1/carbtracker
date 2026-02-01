@@ -8,7 +8,7 @@ export const USE_MOCK_API = false; // Backend is running!
 // use your computer's local IP address
 export const API_BASE_URL = __DEV__
   ? 'http://192.168.4.38:8000' // Your local IP
-  : 'https://api.carbtracker.app'; // Production URL
+  : 'https://attractive-connection-production-1f37.up.railway.app'; // Railway production URL
 
 export const API_ENDPOINTS = {
   analyze: '/api/v1/analyze',
