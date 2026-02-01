@@ -79,7 +79,7 @@ export default function HistoryScreen() {
 
   const groupedMeals = groupMealsByDate(meals);
 
-  if (meals.length === 0 && !isLoading) {
+  if (meals.length === 0) {
     return (
       <View style={styles.emptyContainer}>
         <Ionicons name="nutrition-outline" size={64} color={Colors.textSecondary} />

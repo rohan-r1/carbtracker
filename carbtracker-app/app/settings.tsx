@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, SafeAreaView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
@@ -62,12 +62,12 @@ export default function SettingsScreen() {
         <SettingsItem
           icon="document-text-outline"
           title="Privacy Policy"
-          onPress={() => Linking.openURL('https://carbtracker.app/privacy')}
+          onPress={() => Alert.alert('Coming Soon', 'Privacy policy will be available before public launch.')}
         />
         <SettingsItem
           icon="shield-checkmark-outline"
           title="Terms of Service"
-          onPress={() => Linking.openURL('https://carbtracker.app/terms')}
+          onPress={() => Alert.alert('Coming Soon', 'Terms of Service will be available before public launch.')}
         />
       </SettingsSection>
 
