@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 
 
 class QuickTapOption(BaseModel):
@@ -85,8 +85,10 @@ class MealResponse(BaseModel):
     carbs_logged: Optional[float] = None
     created_at: datetime
 
+    @field_serializer('created_at')
+    def serialize_datetime(self, dt: datetime, _info):
+        """Serialize datetime as UTC ISO string with Z suffix"""
+        return dt.isoformat() + 'Z' if dt else None
+
     class Config:
         from_attributes = True
-        json_encoders = {
-            datetime: lambda v: v.isoformat() + 'Z' if v else None
-        }
