@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -110,8 +110,15 @@ export default function QuickTapScreen() {
     handleNext();
   };
 
+  // Handle no current question in useEffect to avoid render-time navigation
+  useEffect(() => {
+    // Only navigate if we have valid analysis data
+    if (analysisResult && !currentQuestion && questions.length === 0) {
+      router.push('/analyze/final-estimate');
+    }
+  }, [currentQuestion, questions.length, analysisResult]);
+
   if (!currentQuestion) {
-    router.push('/analyze/final-estimate');
     return null;
   }
 

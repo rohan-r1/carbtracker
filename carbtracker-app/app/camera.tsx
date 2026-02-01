@@ -68,7 +68,7 @@ export default function CameraScreen() {
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ['images'],
       quality: 0.8,
     });
 
@@ -84,7 +84,10 @@ export default function CameraScreen() {
   };
 
   const analyzeImage = async () => {
-    if (!capturedImage) return;
+    if (!capturedImage) {
+      Alert.alert('Error', 'No image captured');
+      return;
+    }
 
     reset();
     setCurrentImage(capturedImage);
@@ -101,10 +104,9 @@ export default function CameraScreen() {
       );
       setAnalysisResult(result);
       setIsAnalyzing(false);
-
-      // Navigate to confirmation screen
-      router.replace('/analyze/confirm-foods');
+      // Loading screen will auto-navigate when it detects analysis is complete
     } catch (error: any) {
+      console.error('Analysis error:', error);
       setIsAnalyzing(false);
 
       // Check if it's a "no food detected" error
@@ -133,9 +135,14 @@ export default function CameraScreen() {
           ]
         );
       } else {
+        // Show detailed error message
+        const errorMessage = error?.response?.data?.detail
+          || error?.message
+          || 'Could not analyze the meal photo. Please check your internet connection and try again.';
+
         Alert.alert(
           'Analysis Failed',
-          'Could not analyze the meal photo. Please try again.',
+          `Error: ${errorMessage}\n\nIs the backend API running?`,
           [{ text: 'OK', onPress: () => router.back() }]
         );
       }
@@ -148,28 +155,22 @@ export default function CameraScreen() {
       <View style={styles.container}>
         <Image source={{ uri: capturedImage }} style={styles.preview} />
 
-        {/* Description input */}
+        {/* Description input - Always visible */}
         <View style={styles.descriptionContainer}>
-          {showDescription ? (
-            <TextInput
-              style={styles.descriptionInput}
-              placeholder="Describe the meal (optional, helps with soups/curries)"
-              placeholderTextColor={Colors.textSecondary}
-              value={description}
-              onChangeText={setDescription}
-              multiline
-            />
-          ) : (
-            <TouchableOpacity
-              style={styles.addDescriptionButton}
-              onPress={() => setShowDescription(true)}
-            >
-              <Ionicons name="add" size={20} color={Colors.primary} />
-              <Text style={styles.addDescriptionText}>
-                Add description (optional)
-              </Text>
-            </TouchableOpacity>
-          )}
+          <Text style={styles.descriptionLabel}>
+            Describe your meal (helps with accuracy):
+          </Text>
+          <TextInput
+            style={styles.descriptionInput}
+            placeholder="e.g., Chicken curry with rice, Caesar salad..."
+            placeholderTextColor={Colors.textSecondary}
+            value={description}
+            onChangeText={setDescription}
+            multiline
+            numberOfLines={2}
+            returnKeyType="done"
+            blurOnSubmit={true}
+          />
         </View>
 
         {/* Action buttons */}
@@ -191,6 +192,11 @@ export default function CameraScreen() {
   return (
     <View style={styles.container}>
       <CameraView ref={cameraRef} style={styles.camera} facing={facing} />
+
+      {/* Close button */}
+      <TouchableOpacity style={styles.closeButton} onPress={() => router.back()}>
+        <Ionicons name="close" size={28} color="#fff" />
+      </TouchableOpacity>
 
       {/* Camera overlay */}
       <View style={styles.overlay}>
@@ -319,28 +325,24 @@ const styles = StyleSheet.create({
     bottom: 120,
     left: 16,
     right: 16,
-  },
-  descriptionInput: {
-    backgroundColor: 'rgba(255,255,255,0.98)',
-    borderRadius: DesignSystem.BorderRadius.lg,
-    padding: DesignSystem.Spacing.lg,
-    ...DesignSystem.Typography.body,
-    maxHeight: 100,
-    ...DesignSystem.Shadows.card,
-  },
-  addDescriptionButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.98)',
+    backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: DesignSystem.BorderRadius.lg,
     padding: DesignSystem.Spacing.md,
-    alignSelf: 'flex-start',
-    ...DesignSystem.Shadows.subtle,
+    ...DesignSystem.Shadows.card,
   },
-  addDescriptionText: {
+  descriptionLabel: {
     ...DesignSystem.Typography.label,
-    color: Colors.primary,
-    marginLeft: 6,
+    color: Colors.text,
+    marginBottom: DesignSystem.Spacing.xs,
+    fontWeight: '600',
+  },
+  descriptionInput: {
+    backgroundColor: Colors.backgroundSecondary,
+    borderRadius: DesignSystem.BorderRadius.md,
+    padding: DesignSystem.Spacing.md,
+    ...DesignSystem.Typography.body,
+    minHeight: 60,
+    textAlignVertical: 'top',
   },
   previewActions: {
     position: 'absolute',
@@ -374,5 +376,17 @@ const styles = StyleSheet.create({
   },
   analyzeText: {
     ...DesignSystem.Button.accentText,
+  },
+  closeButton: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 40,
+    right: 20,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
   },
 });

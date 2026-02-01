@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { DesignSystem } from '@/constants/DesignSystem';
 
@@ -39,7 +40,15 @@ function SettingsSection({ title, children }: { title: string; children: React.R
 
 export default function SettingsScreen() {
   return (
-    <ScrollView style={styles.container}>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={Colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Settings</Text>
+        <View style={styles.headerSpacer} />
+      </View>
+      <ScrollView style={styles.container}>
       <SettingsSection title="About">
         <SettingsItem
           icon="information-circle-outline"
@@ -81,10 +90,35 @@ export default function SettingsScreen() {
         </Text>
       </View>
     </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: Colors.background,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: DesignSystem.Spacing.lg,
+    paddingVertical: DesignSystem.Spacing.md,
+    backgroundColor: Colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  backButton: {
+    padding: DesignSystem.Spacing.xs,
+  },
+  headerTitle: {
+    ...DesignSystem.Typography.h3,
+    color: Colors.text,
+  },
+  headerSpacer: {
+    width: 40,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.backgroundSecondary,

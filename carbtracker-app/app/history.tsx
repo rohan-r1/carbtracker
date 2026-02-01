@@ -7,8 +7,10 @@ import {
   TouchableOpacity,
   Image,
   RefreshControl,
+  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { DesignSystem } from '@/constants/DesignSystem';
 import { useMealsStore } from '@/store/mealsStore';
@@ -64,30 +66,16 @@ function MealCard({ meal }: { meal: Meal }) {
 }
 
 export default function HistoryScreen() {
-  const { meals, setMeals, isLoading, setLoading } = useMealsStore();
+  const { meals, loadFromStorage } = useMealsStore();
   const [refreshing, setRefreshing] = useState(false);
-
-  const loadMeals = async () => {
-    try {
-      setLoading(true);
-      const data = await apiClient.getMeals();
-      setMeals(data);
-    } catch (error) {
-      console.error('Failed to load meals:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadMeals();
+    await loadFromStorage(); // Load from local AsyncStorage
     setRefreshing(false);
   };
 
-  useEffect(() => {
-    loadMeals();
-  }, []);
+  // No useEffect needed - meals are already loaded from storage on app start
 
   const groupedMeals = groupMealsByDate(meals);
 
@@ -104,7 +92,14 @@ export default function HistoryScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+          <Ionicons name="arrow-back" size={24} color={Colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Meal History</Text>
+        <View style={styles.headerSpacer} />
+      </View>
       <FlatList
         data={groupedMeals}
         keyExtractor={(item) => item.date}
@@ -121,7 +116,7 @@ export default function HistoryScreen() {
         }
         contentContainerStyle={styles.listContent}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -129,6 +124,26 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: Colors.backgroundSecondary,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: DesignSystem.Spacing.lg,
+    paddingVertical: DesignSystem.Spacing.md,
+    backgroundColor: Colors.background,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.border,
+  },
+  backButton: {
+    padding: DesignSystem.Spacing.xs,
+  },
+  headerTitle: {
+    ...DesignSystem.Typography.h3,
+    color: Colors.text,
+  },
+  headerSpacer: {
+    width: 40,
   },
   emptyContainer: {
     flex: 1,

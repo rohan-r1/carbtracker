@@ -1,10 +1,23 @@
 import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { router } from 'expo-router';
 import { Colors } from '@/constants/Colors';
 import { DesignSystem } from '@/constants/DesignSystem';
 import { useAnalysisStore } from '@/store/analysisStore';
 
 export default function LoadingScreen() {
-  const { currentImageUri } = useAnalysisStore();
+  const { currentImageUri, analysisResult, isAnalyzing } = useAnalysisStore();
+  const hasNavigated = useRef(false);
+
+  // Auto-navigate when analysis completes
+  useEffect(() => {
+    if (!isAnalyzing && analysisResult && !hasNavigated.current) {
+      hasNavigated.current = true;
+      setTimeout(() => {
+        router.replace('/analyze/confirm-foods');
+      }, 100);
+    }
+  }, [isAnalyzing, analysisResult]);
 
   return (
     <View style={styles.container}>

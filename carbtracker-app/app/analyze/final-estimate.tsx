@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -92,6 +92,8 @@ export default function FinalEstimateScreen() {
     foodConfirmations,
     quickTapAnswers,
     manualAdjustment,
+    currentImageUri,
+    description,
     setManualAdjustment,
     setFinalEstimate,
     isFinalizing,
@@ -102,10 +104,21 @@ export default function FinalEstimateScreen() {
   const { addMeal } = useMealsStore();
   const [isLogging, setIsLogging] = useState(false);
 
+  // Handle missing analysis result
+  useEffect(() => {
+    if (!analysisResult) {
+      Alert.alert(
+        'Error',
+        'Analysis data was lost. Please try analyzing again.',
+        [{ text: 'OK', onPress: () => router.back() }]
+      );
+    }
+  }, [analysisResult]);
+
   if (!analysisResult) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>No analysis results found</Text>
+        <Text style={styles.errorText}>Loading analysis results...</Text>
       </View>
     );
   }
@@ -180,17 +193,27 @@ export default function FinalEstimateScreen() {
         final_carbs: totalCarbs,
       });
 
-      addMeal(meal);
+      // Add the local image URI and description to the meal for local display
+      // (Backend may not have photo storage configured yet)
+      const mealWithLocalData = {
+        ...meal,
+        photo_url: meal.photo_url || currentImageUri,
+        description: meal.description || description,
+      };
+
+      addMeal(mealWithLocalData);
 
       // Reset loading state before navigation to prevent state update on unmounted component
       setIsLogging(false);
 
       Alert.alert('Meal Logged!', `${totalCarbs}g carbs logged successfully.`, [
         {
-          text: 'OK',
+          text: 'Back to Home',
           onPress: () => {
-            reset();
-            router.replace('/(tabs)');
+            // Navigate first, then reset state after navigation starts
+            // This prevents intermediate screens from re-rendering with empty state
+            router.replace('/(home)' as any);
+            setTimeout(() => reset(), 100);
           },
         },
       ]);

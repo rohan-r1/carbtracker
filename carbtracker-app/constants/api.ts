@@ -1,6 +1,9 @@
 // API Configuration
 // Change this to your actual API URL when deploying
 
+// Enable mock mode for testing without backend
+export const USE_MOCK_API = false; // Backend is running!
+
 // For local development with Expo Go on physical device,
 // use your computer's local IP address
 export const API_BASE_URL = __DEV__

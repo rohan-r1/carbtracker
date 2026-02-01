@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -112,6 +112,7 @@ export default function ConfirmFoodsScreen() {
     foodConfirmations,
     setFoodConfirmation,
   } = useAnalysisStore();
+
 
   // Initialize selections with most likely options
   const getSelectedName = (food: FoodItem) => {
