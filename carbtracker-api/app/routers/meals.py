@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import desc
 
 from app.database import get_db
-from app.models.meal import Meal, Analysis
+from app.models.meal import Meal, Analysis, FoodItem
 from app.schemas.analysis import MealLogRequest, MealResponse
 
 router = APIRouter()
@@ -38,6 +38,25 @@ async def log_meal(
 
     # Update the meal with logged carbs
     meal.carbs_logged = request.final_carbs
+
+    # Generate meal description from foods if not already set
+    if not meal.description:
+        # Query selected food items from the analysis
+        selected_foods = (
+            db.query(FoodItem)
+            .filter(FoodItem.analysis_id == analysis.id)
+            .filter(FoodItem.is_selected == 1)
+            .all()
+        )
+
+        if selected_foods:
+            # Create description from selected foods (max 3, then "+N more")
+            food_names = [f.name for f in selected_foods]
+            description = ", ".join(food_names[:3])  # Take first 3 foods
+            if len(food_names) > 3:
+                description += f" +{len(food_names) - 3} more"
+            meal.description = description
+
     db.commit()
     db.refresh(meal)
 
