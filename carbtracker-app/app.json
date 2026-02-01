@@ -1,0 +1,55 @@
+{
+  "expo": {
+    "name": "CarbTracker",
+    "slug": "carbtracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "scheme": "carbtracker",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#2d5016"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.carbtracker.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "CarbTracker needs camera access to take photos of your meals for carb estimation.",
+        "NSPhotoLibraryUsageDescription": "CarbTracker needs photo library access to select meal photos for carb estimation."
+      }
+    },
+    "android": {
+      "package": "com.carbtracker.app",
+      "permissions": ["android.permission.CAMERA"],
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#2d5016"
+      }
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow CarbTracker to access your camera to take photos of your meals."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow CarbTracker to access your photos to select meal images."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

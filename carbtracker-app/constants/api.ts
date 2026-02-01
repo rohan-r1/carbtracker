@@ -1,0 +1,16 @@
+// API Configuration
+// Change this to your actual API URL when deploying
+
+// For local development with Expo Go on physical device,
+// use your computer's local IP address
+export const API_BASE_URL = __DEV__
+  ? 'http://192.168.4.38:8000' // Your local IP
+  : 'https://api.carbtracker.app'; // Production URL
+
+export const API_ENDPOINTS = {
+  analyze: '/api/v1/analyze',
+  finalize: (analysisId: string) => `/api/v1/analyze/${analysisId}/finalize`,
+  meals: '/api/v1/meals',
+  mealById: (mealId: string) => `/api/v1/meals/${mealId}`,
+  logMeal: '/api/v1/meals/log',
+};

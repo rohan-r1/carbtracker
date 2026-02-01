@@ -1,0 +1,27 @@
+# FastAPI and server
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database
+sqlalchemy
+alembic
+
+# Anthropic API
+anthropic
+
+# Image processing
+pillow
+
+# Cloud storage (Cloudflare R2 via boto3)
+boto3
+
+# Environment and utilities
+python-dotenv
+pydantic
+pydantic-settings
+
+# Testing
+pytest
+pytest-asyncio
+httpx

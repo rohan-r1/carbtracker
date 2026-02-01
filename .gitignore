@@ -1,0 +1,42 @@
+# Environment variables (contains API key - keep secret!)
+.env
+.env.local
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+env/
+
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Test results
+results/
+*.csv
+
+# Build outputs
+build/
+*.apk
+*.ipa
+
+# OS files
+.DS_Store
+Thumbs.db

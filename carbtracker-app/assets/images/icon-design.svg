@@ -1,0 +1,19 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background with rounded corners -->
+  <rect width="1024" height="1024" rx="180" fill="#2563eb"/>
+
+  <!-- Subtle gradient overlay -->
+  <defs>
+    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#1e40af;stop-opacity:0.3" />
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" rx="180" fill="url(#grad1)"/>
+
+  <!-- "CT" Text -->
+  <text x="512" y="650" font-family="Arial, sans-serif" font-size="480" font-weight="bold" fill="white" text-anchor="middle">CT</text>
+
+  <!-- Small "g" subscript for "carbs grams" -->
+  <text x="730" y="680" font-family="Arial, sans-serif" font-size="180" font-weight="normal" fill="rgba(255,255,255,0.8)" text-anchor="middle">g</text>
+</svg>

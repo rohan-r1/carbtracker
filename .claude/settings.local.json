@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python -m pip install:*)",
+      "Bash(python scripts/test_carb_estimate.py:*)",
+      "Bash(python scripts/test_carb_estimate_v2.py:*)",
+      "Bash(python:*)",
+      "Bash(netstat:*)",
+      "Bash(findstr:*)",
+      "Bash(npx tsc:*)",
+      "WebSearch",
+      "Bash(git add:*)"
+    ]
+  }
+}
