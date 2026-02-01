@@ -404,6 +404,27 @@ When you make product decisions:
 
 ---
 
+## Bug Fixing Workflow
+
+**When you report a bug, I will follow this process:**
+
+1. **Write a test first** - Before attempting any fix, I'll write a test that reproduces the bug
+2. **Delegate to subagents** - Use specialized subagents to fix the bug while I oversee
+3. **Prove the fix** - Verify the bug is fixed by running the test and confirming it passes
+
+**Why this approach:**
+- Tests document the bug clearly
+- Prevents regression (bug won't come back unnoticed)
+- Validates the fix actually works
+- Creates a safety net for future changes
+
+**What this means for you:**
+- Bug fixes may take slightly longer (test writing + fix)
+- You'll see test files created alongside fixes
+- Higher confidence that bugs stay fixed
+
+---
+
 ## Working Agreement
 
 **My commitment:** I will prioritize building something that works and is maintainable over building something "perfect." I will speak up if a decision creates technical risk or user safety issues.
