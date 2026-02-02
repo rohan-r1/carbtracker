@@ -265,6 +265,10 @@ def generate_quick_tap_questions(
         food_name = most_likely.get("name", "")
         food_confidence = most_likely.get("confidence", 100)
 
+        # Only add category questions if confidence is low (below threshold)
+        if food_confidence >= confidence_threshold:
+            continue
+
         # Detect category
         category = detect_food_category(food_name)
         if not category:
@@ -279,8 +283,21 @@ def generate_quick_tap_questions(
             if cq["question"] in existing_categories:
                 continue
 
-            # Check thresholds
-            if food_confidence < confidence_threshold or cq["carb_impact"] > carb_impact_threshold:
+            # Only check carb impact threshold (confidence already checked above)
+            if cq["carb_impact"] > carb_impact_threshold:
+                # Make question contextual by inserting food name
+                contextual_question = cq["question"]
+
+                # Replace generic terms with specific food name
+                if "pizza" in cq["question"].lower() and category == "pizza":
+                    contextual_question = cq["question"]  # Already specific
+                elif "cereal" in cq["question"].lower() and category == "cereal":
+                    contextual_question = cq["question"]  # Already specific
+                elif "is this" in cq["question"].lower():
+                    contextual_question = cq["question"].replace("Is this", f"Is the {food_name}")
+                elif "this" in cq["question"].lower() and category != "beverage":
+                    contextual_question = cq["question"].replace("this", f"the {food_name}")
+
                 options = [
                     QuickTapOption(
                         label=opt["label"],
@@ -293,7 +310,7 @@ def generate_quick_tap_questions(
                     QuickTapQuestionResponse(
                         id=f"q_{len(questions) + 1}",
                         food_id=food.get("id"),
-                        question=cq["question"],
+                        question=contextual_question,
                         options=options,
                         carb_impact=cq["carb_impact"],
                     )
