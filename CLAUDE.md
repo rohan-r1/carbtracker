@@ -425,6 +425,17 @@ When you make product decisions:
 
 ---
 
+## Git Commit Guidelines
+
+**When creating commits:**
+- Write clear, descriptive commit messages
+- Use present tense ("Fix bug" not "Fixed bug")
+- Include root cause and implementation details for bug fixes
+- **DO NOT include "Co-Authored-By" lines**
+- Keep messages concise but informative
+
+---
+
 ## Working Agreement
 
 **My commitment:** I will prioritize building something that works and is maintainable over building something "perfect." I will speak up if a decision creates technical risk or user safety issues.
