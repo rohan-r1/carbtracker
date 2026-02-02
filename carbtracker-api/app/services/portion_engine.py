@@ -8,9 +8,9 @@ from app.schemas.analysis import PortionOption
 
 # Universal 3-option portion template for all foods
 UNIVERSAL_PORTIONS = [
-    {"label": "Small", "multiplier": 0.7},
+    {"label": "Small", "multiplier": 0.5},
     {"label": "Regular", "multiplier": 1.0},
-    {"label": "Large", "multiplier": 1.4},
+    {"label": "Large", "multiplier": 1.5},
 ]
 
 
