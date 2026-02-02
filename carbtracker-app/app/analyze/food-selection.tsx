@@ -64,6 +64,14 @@ export default function FoodSelectionScreen() {
     });
   }
 
+  // Pre-select all most likely foods by default (user can deselect incorrect ones)
+  useEffect(() => {
+    if (analysisResult && selectedFoodIds.length === 0) {
+      const defaultSelected = analysisResult.foods.map((food) => food.id);
+      setSelectedFoodIds(defaultSelected);
+    }
+  }, [analysisResult]);
+
   // Check if description is required (any food with confidence < 70)
   useEffect(() => {
     if (analysisResult) {
@@ -130,7 +138,7 @@ export default function FoodSelectionScreen() {
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
         {/* Info text */}
         <Text style={styles.infoText}>
-          Select all the foods you see (tap to select/deselect)
+          We detected these foods. Tap to remove any incorrect items.
         </Text>
 
         {/* Food options - checkboxes */}

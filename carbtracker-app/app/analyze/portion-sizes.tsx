@@ -73,6 +73,23 @@ export default function PortionSizesScreen() {
     return selection?.portionLabel || null;
   };
 
+  // Pre-select "Regular" portion by default when moving to a new food
+  useEffect(() => {
+    if (currentFood && !getSelectedPortion(currentFood.id)) {
+      const regularOption = currentFood.portionOptions.find(
+        (opt) => opt.label === 'Regular'
+      );
+      if (regularOption) {
+        setPortionSelection({
+          foodId: currentFood.id,
+          foodName: currentFood.name,
+          portionLabel: regularOption.label,
+          multiplier: regularOption.multiplier,
+        });
+      }
+    }
+  }, [currentFoodIndex, currentFood]);
+
   const handleSelectPortion = (option: PortionOption) => {
     if (currentFood) {
       setPortionSelection({
