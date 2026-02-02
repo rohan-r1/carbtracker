@@ -198,7 +198,7 @@ export default function FinalEstimateScreen() {
       const mealWithLocalData = {
         ...meal,
         photo_url: meal.photo_url || currentImageUri,
-        description: meal.description || description,
+        description: meal.description ?? description,
       };
 
       addMeal(mealWithLocalData);

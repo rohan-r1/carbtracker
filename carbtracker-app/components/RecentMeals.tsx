@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors } from '@/constants/Colors';
 import { DesignSystem } from '@/constants/DesignSystem';
 import { useMealsStore } from '@/store/mealsStore';
+import { formatTimeAgo } from '@/utils/dateUtils';
 
 export function RecentMeals() {
   const { meals } = useMealsStore();
@@ -22,21 +23,8 @@ export function RecentMeals() {
     );
   }
 
-  const formatTimeAgo = (dateString: string) => {
-    const now = Date.now();
-    const timestamp = new Date(dateString).getTime();
-    const diff = now - timestamp;
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
-  };
-
   const truncateDescription = (text: string | null) => {
-    if (!text) return 'Meal';
+    if (!text || text.trim() === '') return 'Meal';
     const words = text.split(' ');
     if (words.length <= 5) return text;
     return words.slice(0, 5).join(' ') + '...';

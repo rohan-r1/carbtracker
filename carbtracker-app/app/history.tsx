@@ -16,17 +16,14 @@ import { DesignSystem } from '@/constants/DesignSystem';
 import { useMealsStore } from '@/store/mealsStore';
 import { apiClient } from '@/services/api';
 import { Meal } from '@/types/api';
+import { formatTime, formatDate } from '@/utils/dateUtils';
 
 // Group meals by date
 function groupMealsByDate(meals: Meal[]): { date: string; meals: Meal[] }[] {
   const groups: { [key: string]: Meal[] } = {};
 
   meals.forEach((meal) => {
-    const date = new Date(meal.created_at).toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'short',
-      day: 'numeric',
-    });
+    const date = formatDate(meal.created_at);
     if (!groups[date]) {
       groups[date] = [];
     }
@@ -37,10 +34,7 @@ function groupMealsByDate(meals: Meal[]): { date: string; meals: Meal[] }[] {
 }
 
 function MealCard({ meal }: { meal: Meal }) {
-  const time = new Date(meal.created_at).toLocaleTimeString('en-US', {
-    hour: 'numeric',
-    minute: '2-digit',
-  });
+  const time = formatTime(meal.created_at);
 
   return (
     <TouchableOpacity style={styles.mealCard}>
@@ -53,7 +47,7 @@ function MealCard({ meal }: { meal: Meal }) {
       )}
       <View style={styles.mealInfo}>
         <Text style={styles.mealDescription} numberOfLines={2}>
-          {meal.description || 'Meal'}
+          {meal.description && meal.description.trim() !== '' ? meal.description : 'Meal'}
         </Text>
         <Text style={styles.mealTime}>{time}</Text>
       </View>

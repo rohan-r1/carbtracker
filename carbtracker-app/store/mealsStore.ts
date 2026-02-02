@@ -19,6 +19,8 @@ interface MealsState {
 }
 
 const MEALS_STORAGE_KEY = 'carbtracker_meals';
+const MIGRATION_VERSION_KEY = 'carbtracker_migration_version';
+const CURRENT_MIGRATION_VERSION = 1;
 
 export const useMealsStore = create<MealsState>((set, get) => ({
   meals: [],
@@ -59,9 +61,24 @@ export const useMealsStore = create<MealsState>((set, get) => ({
 
   loadFromStorage: async () => {
     try {
+      const migrationVersion = await AsyncStorage.getItem(MIGRATION_VERSION_KEY);
+      const currentVersion = migrationVersion ? parseInt(migrationVersion) : 0;
+
       const stored = await AsyncStorage.getItem(MEALS_STORAGE_KEY);
       if (stored) {
-        set({ meals: JSON.parse(stored) });
+        let meals: Meal[] = JSON.parse(stored);
+
+        // Migration 1: Clear stale meal data with timestamp/description bugs
+        if (currentVersion < 1) {
+          console.log('Migration: Clearing stale meal data to fix timestamp/description bugs');
+          meals = [];  // Clear all meals (one-time fix)
+          await AsyncStorage.setItem(MIGRATION_VERSION_KEY, '1');
+        }
+
+        set({ meals });
+      } else if (currentVersion < 1) {
+        // No stored meals, but still mark migration as complete
+        await AsyncStorage.setItem(MIGRATION_VERSION_KEY, '1');
       }
     } catch (error) {
       console.error('Failed to load meals from storage:', error);
