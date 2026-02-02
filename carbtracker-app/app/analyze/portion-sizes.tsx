@@ -323,8 +323,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.accentSubtle,
   },
   portionOptionRegularSelected: {
-    borderColor: Colors.success,
-    backgroundColor: Colors.success,
+    borderColor: Colors.primary,
+    backgroundColor: Colors.primary,
   },
   portionLabel: {
     ...DesignSystem.Typography.body,
