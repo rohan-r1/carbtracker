@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   portionLabelRegularSelected: {
-    color: '#FFC107', // Yellow text
+    color: '#FFFFFF', // White text
     fontWeight: '600',
   },
   portionCarbs: {
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
   portionCarbsRegularSelected: {
-    color: '#FFC107', // Yellow text for carbs too
+    color: '#FFFFFF', // White text for carbs too
   },
   infoBox: {
     flexDirection: 'row',
