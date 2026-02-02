@@ -10,7 +10,19 @@
       "Bash(findstr:*)",
       "Bash(npx tsc:*)",
       "WebSearch",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(ipconfig:*)",
+      "Bash(dir \"C:\\\\Users\\\\rohan\\\\Documents\\\\carbtracker\\\\carbtracker-app\" /s /b)",
+      "Bash(ls -la \"C:\\\\Users\\\\rohan\\\\Documents\\\\carbtracker\\\\carbtracker-app\\\\app\\\\analyze\"\" 2>/dev/null || echo \"Directory not found \")",
+      "Bash(curl:*)",
+      "Bash(git push)",
+      "Bash(railway service:*)",
+      "Bash(railway services:*)",
+      "Bash(railway logs:*)",
+      "Bash(. venv/Scripts/activate)",
+      "Bash(pytest:*)",
+      "Bash(venv/Scripts/python -m pytest:*)",
+      "Bash(npm test:*)"
     ]
   }
 }

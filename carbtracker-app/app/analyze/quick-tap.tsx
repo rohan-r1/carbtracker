@@ -5,6 +5,7 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -79,12 +80,24 @@ function QuestionCard({
 }
 
 export default function QuickTapScreen() {
-  const { analysisResult, quickTapAnswers, setQuickTapAnswer } =
+  const { analysisResult, currentImageUri, quickTapAnswers, setQuickTapAnswer } =
     useAnalysisStore();
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  const questions = analysisResult?.quick_tap_questions || [];
+  // Filter questions by uncertainty and limit to 3
+  const allQuestions = analysisResult?.quick_tap_questions || [];
+  const uncertainQuestions = allQuestions.filter(q => {
+    if (!q.food_id) return true;  // General questions always show
+
+    const relatedFood = analysisResult?.foods.find(f => f.id === q.food_id);
+    if (!relatedFood) return true;
+
+    // Show if most likely food has confidence < 75
+    return relatedFood.most_likely.confidence < 75;
+  });
+
+  const questions = uncertainQuestions.slice(0, 3);  // Limit to 3
   const currentQuestion = questions[currentQuestionIndex];
 
   const getSelectedAnswer = (questionId: string) => {
@@ -127,7 +140,7 @@ export default function QuickTapScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Fixed Header */}
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
@@ -152,8 +165,19 @@ export default function QuickTapScreen() {
         <View style={[styles.progressBar, { width: `${progress * 100}%` }]} />
       </View>
 
-      {/* Question */}
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      {/* Meal Photo Section (top 40%) */}
+      <View style={styles.photoSection}>
+        {currentImageUri && (
+          <Image
+            source={{ uri: currentImageUri }}
+            style={styles.mealPhoto}
+            resizeMode="cover"
+          />
+        )}
+      </View>
+
+      {/* Questions Section (bottom 60% - scrollable) */}
+      <ScrollView style={styles.questionsSection} contentContainerStyle={styles.scrollContent}>
         <QuestionCard
           question={currentQuestion}
           selectedAnswer={selectedAnswer}
@@ -169,7 +193,7 @@ export default function QuickTapScreen() {
         </View>
       </ScrollView>
 
-      {/* Continue button */}
+      {/* Fixed Footer */}
       <View style={styles.footer}>
         <TouchableOpacity
           style={[
@@ -193,17 +217,15 @@ export default function QuickTapScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.backgroundSecondary,
+    backgroundColor: Colors.background,
   },
   header: {
     paddingTop: 60,
     paddingHorizontal: DesignSystem.Spacing.base,
-    paddingBottom: DesignSystem.Spacing.base,
+    paddingBottom: DesignSystem.Spacing.md,
     backgroundColor: Colors.background,
     flexDirection: 'row',
     alignItems: 'center',
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
   },
   backButton: {
     width: 40,
@@ -231,8 +253,20 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: Colors.accent,
   },
-  scrollView: {
-    flex: 1,
+  photoSection: {
+    height: '35%',  // Top 35% of screen for meal photo
+    width: '100%',
+    backgroundColor: Colors.backgroundSecondary,
+    borderBottomWidth: 2,
+    borderBottomColor: Colors.border,
+  },
+  mealPhoto: {
+    width: '100%',
+    height: '100%',
+  },
+  questionsSection: {
+    flex: 1,  // Bottom portion of screen (scrollable)
+    backgroundColor: Colors.backgroundSecondary,
   },
   scrollContent: {
     padding: DesignSystem.Spacing.base,

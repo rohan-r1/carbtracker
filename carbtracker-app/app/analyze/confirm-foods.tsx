@@ -68,10 +68,9 @@ interface FoodCardProps {
   food: FoodItem;
   selectedName: string;
   onSelectFood: (name: string) => void;
-  foodNumber: number;
 }
 
-function FoodCard({ food, selectedName, onSelectFood, foodNumber }: FoodCardProps) {
+function FoodCard({ food, selectedName, onSelectFood }: FoodCardProps) {
   const allOptions = [
     food.most_likely,
     ...food.alternatives,
@@ -80,11 +79,8 @@ function FoodCard({ food, selectedName, onSelectFood, foodNumber }: FoodCardProp
   return (
     <View style={styles.foodCard}>
       <View style={styles.cardHeader}>
-        <View style={styles.foodNumberBadge}>
-          <Text style={styles.foodNumberText}>{foodNumber}</Text>
-        </View>
         <View style={styles.cardHeaderText}>
-          <Text style={styles.cardTitle}>What is this item?</Text>
+          <Text style={styles.cardTitle}>What is this?</Text>
           {food.portion && (
             <Text style={styles.portionText}>Portion: {food.portion}</Text>
           )}
@@ -162,14 +158,6 @@ export default function ConfirmFoodsScreen() {
         {currentImageUri && (
           <Image source={{ uri: currentImageUri }} style={styles.headerImage} />
         )}
-        {/* Numbered badges on image */}
-        <View style={styles.imageBadgesContainer}>
-          {analysisResult.foods.map((food, index) => (
-            <View key={food.id} style={styles.imageBadge}>
-              <Text style={styles.imageBadgeText}>{index + 1}</Text>
-            </View>
-          ))}
-        </View>
         <View style={styles.headerOverlay}>
           <TouchableOpacity
             style={styles.backButton}
@@ -189,13 +177,12 @@ export default function ConfirmFoodsScreen() {
 
       {/* Food cards */}
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        {analysisResult.foods.map((food, index) => (
+        {analysisResult.foods.map((food) => (
           <FoodCard
             key={food.id}
             food={food}
             selectedName={getSelectedName(food)}
             onSelectFood={(name) => setFoodConfirmation(food.id, name)}
-            foodNumber={index + 1}
           />
         ))}
       </ScrollView>
@@ -254,29 +241,6 @@ const styles = StyleSheet.create({
     color: Colors.textInverse,
     marginLeft: DesignSystem.Spacing.md,
   },
-  imageBadgesContainer: {
-    position: 'absolute',
-    top: DesignSystem.Spacing.base,
-    right: DesignSystem.Spacing.base,
-    flexDirection: 'row',
-    gap: DesignSystem.Spacing.sm,
-  },
-  imageBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: DesignSystem.BorderRadius.round,
-    backgroundColor: Colors.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...DesignSystem.Shadows.medium,
-    borderWidth: 2,
-    borderColor: Colors.textInverse,
-  },
-  imageBadgeText: {
-    ...DesignSystem.Typography.button,
-    fontSize: 16,
-    color: Colors.textOnAccent,
-  },
   estimateBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -305,27 +269,10 @@ const styles = StyleSheet.create({
     marginBottom: DesignSystem.Spacing.base,
   },
   cardHeader: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
     marginBottom: DesignSystem.Spacing.md,
-    gap: DesignSystem.Spacing.md,
   },
   cardHeaderText: {
     flex: 1,
-  },
-  foodNumberBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: DesignSystem.BorderRadius.round,
-    backgroundColor: Colors.accent,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...DesignSystem.Shadows.subtle,
-  },
-  foodNumberText: {
-    ...DesignSystem.Typography.button,
-    fontSize: 14,
-    color: Colors.textOnAccent,
   },
   cardTitle: {
     ...DesignSystem.Typography.h4,

@@ -125,7 +125,7 @@ Return JSON in this exact format:
     {{
       "food_id": "food_1",
       "category": "size|type|preparation|hidden_ingredients",
-      "question": "What size is this?",
+      "question": "What size is the banana?",
       "options": [
         {{"label": "Small", "carb_adjustment": -10}},
         {{"label": "Medium", "carb_adjustment": 0}},
@@ -159,7 +159,23 @@ Guidelines:
 7. Maximum 3 uncertainties (questions)
 8. Categories: "size" for portion questions, "type" for food identification, "preparation" for cooking method, "hidden_ingredients" for things you can't see
 9. Be conservative - if unsure, use the higher carb estimate
-10. preliminary_estimate.likely should be your best single estimate"""
+10. preliminary_estimate.likely should be your best single estimate
+
+**Question Phrasing Guidelines (CRITICAL):**
+- ALWAYS make questions contextual and conversational, referring to the specific food by name
+- For binary detection (is X present?): "Is there [food name] on your food?" or "Are there [food name] in your meal?"
+  * Example: "Is there butter on your toast?" with options ["Yes", "No"]
+  * Example: "Are there mixed berries in your meal?" with options ["Yes", "No"]
+- For portion/size questions: "What size is the [food name]?" or "How much [food name]?"
+  * Example: "What size is the banana?" with options ["Small", "Medium", "Large"]
+  * Example: "How much rice?" with options ["1/2 cup", "1 cup", "1.5 cups"]
+- For preparation: "How is the [food name] prepared?"
+  * Example: "How is the chicken prepared?" with options ["Grilled", "Fried", "Baked"]
+- For hidden ingredients: "What's in the [dish name]?" or "What liquid is in the [container]?"
+  * Example: "What's in the curry?" with options ["Just vegetables", "With rice", "With naan"]
+- NEVER use generic questions like "What is this item?" - always name the food you're asking about
+- If asking about presence/absence, use Yes/No options. If asking about quantities, provide specific quantity options
+- Make questions natural and easy to answer quickly while looking at the photo"""
 
 
 async def analyze_meal_image(

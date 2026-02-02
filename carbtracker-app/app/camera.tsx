@@ -8,6 +8,7 @@ import {
   Image,
   Alert,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
@@ -83,6 +84,11 @@ export default function CameraScreen() {
     setShowDescription(false);
   };
 
+  const handleSkipDescription = () => {
+    setDescription('');  // Clear any partial input
+    analyzeImage();       // Proceed to analysis
+  };
+
   const analyzeImage = async () => {
     if (!capturedImage) {
       Alert.alert('Error', 'No image captured');
@@ -152,40 +158,51 @@ export default function CameraScreen() {
   // Show captured image preview
   if (capturedImage) {
     return (
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.container}
+        keyboardVerticalOffset={0}
+      >
         <Image source={{ uri: capturedImage }} style={styles.preview} />
 
-        {/* Description input - Always visible */}
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionLabel}>
-            Describe your meal (helps with accuracy):
-          </Text>
-          <TextInput
-            style={styles.descriptionInput}
-            placeholder="e.g., Chicken curry with rice, Caesar salad..."
-            placeholderTextColor={Colors.textSecondary}
-            value={description}
-            onChangeText={setDescription}
-            multiline
-            numberOfLines={2}
-            returnKeyType="done"
-            blurOnSubmit={true}
-          />
-        </View>
+        {/* Bottom section with description and buttons */}
+        <View style={styles.bottomSection}>
+          {/* Description input */}
+          <View style={styles.descriptionContainer}>
+            <Text style={styles.descriptionLabel}>
+              Describe your meal (helps with accuracy):
+            </Text>
+            <TextInput
+              style={styles.descriptionInput}
+              placeholder="e.g., Chicken curry with rice, Caesar salad..."
+              placeholderTextColor={Colors.textSecondary}
+              value={description}
+              onChangeText={setDescription}
+              multiline
+              numberOfLines={2}
+              returnKeyType="done"
+              blurOnSubmit={true}
+            />
+          </View>
 
-        {/* Action buttons */}
-        <View style={styles.previewActions}>
-          <TouchableOpacity style={styles.retakeButton} onPress={retakePicture}>
-            <Ionicons name="refresh" size={24} color={Colors.text} />
-            <Text style={styles.retakeText}>Retake</Text>
-          </TouchableOpacity>
+          {/* Action buttons */}
+          <View style={styles.previewActions}>
+            <TouchableOpacity style={styles.skipButton} onPress={handleSkipDescription}>
+              <Text style={styles.skipText}>Skip</Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity style={styles.analyzeButton} onPress={analyzeImage}>
-            <Text style={styles.analyzeText}>Analyze Meal</Text>
-            <Ionicons name="arrow-forward" size={24} color="#fff" />
-          </TouchableOpacity>
+            <TouchableOpacity style={styles.analyzeButton} onPress={analyzeImage}>
+              <Text style={styles.analyzeText}>Analyze Meal</Text>
+              <Ionicons name="arrow-forward" size={20} color="#fff" />
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.retakeButton} onPress={retakePicture}>
+              <Ionicons name="refresh" size={20} color={Colors.text} />
+              <Text style={styles.retakeText}>Retake</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -320,15 +337,16 @@ const styles = StyleSheet.create({
     flex: 1,
     resizeMode: 'contain',
   },
+  bottomSection: {
+    paddingBottom: DesignSystem.Spacing.base,
+  },
   descriptionContainer: {
-    position: 'absolute',
-    bottom: 120,
-    left: 16,
-    right: 16,
+    marginHorizontal: DesignSystem.Spacing.base,
+    marginBottom: DesignSystem.Spacing.md,
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: DesignSystem.BorderRadius.lg,
     padding: DesignSystem.Spacing.md,
-    ...DesignSystem.Shadows.card,
+    ...DesignSystem.Shadows.medium,
   },
   descriptionLabel: {
     ...DesignSystem.Typography.label,
@@ -345,37 +363,55 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   previewActions: {
-    position: 'absolute',
-    bottom: 40,
-    left: DesignSystem.Spacing.lg,
-    right: DesignSystem.Spacing.lg,
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: DesignSystem.Spacing.md,
+    paddingHorizontal: DesignSystem.Spacing.base,
+    gap: DesignSystem.Spacing.sm,
+    paddingBottom: DesignSystem.Spacing.base,
   },
-  retakeButton: {
+  skipButton: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: Colors.surface,
-    paddingHorizontal: DesignSystem.Spacing.xl,
-    paddingVertical: DesignSystem.Spacing.base,
-    borderRadius: DesignSystem.BorderRadius.lg,
-    gap: DesignSystem.Spacing.sm,
-    ...DesignSystem.Shadows.card,
+    paddingVertical: DesignSystem.Spacing.md,
+    borderRadius: DesignSystem.BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    gap: DesignSystem.Spacing.xs,
+  },
+  skipText: {
+    ...DesignSystem.Typography.button,
+    color: Colors.text,
+    fontSize: 14,
+  },
+  analyzeButton: {
+    flex: 1.5,
+    ...DesignSystem.Button.accent,
+    paddingVertical: DesignSystem.Spacing.md,
+    flexDirection: 'row',
+    gap: DesignSystem.Spacing.xs,
+  },
+  analyzeText: {
+    ...DesignSystem.Button.accentText,
+    fontSize: 14,
+  },
+  retakeButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.surface,
+    paddingVertical: DesignSystem.Spacing.md,
+    borderRadius: DesignSystem.BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    gap: DesignSystem.Spacing.xs,
   },
   retakeText: {
     ...DesignSystem.Typography.button,
     color: Colors.text,
-  },
-  analyzeButton: {
-    flex: 1,
-    ...DesignSystem.Button.accent,
-    paddingVertical: DesignSystem.Spacing.base,
-    flexDirection: 'row',
-    gap: DesignSystem.Spacing.sm,
-  },
-  analyzeText: {
-    ...DesignSystem.Button.accentText,
+    fontSize: 14,
   },
   closeButton: {
     position: 'absolute',
