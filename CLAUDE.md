@@ -44,6 +44,13 @@ I will handle:
 - Technical risk assessment
 - Explaining technical tradeoffs in plain language for your decision-making
 
+**CRITICAL: When making ANY frontend UX changes:**
+- **ALWAYS reference `DESIGN_GUIDELINES.md` first**
+- Use `Colors.primary` (forest green #2d5016) for primary elements, NOT `Colors.success`
+- Use DesignSystem constants instead of hardcoded values
+- Follow 4px spacing grid
+- Check existing screens for similar patterns
+
 ---
 
 ## Core Problem We're Solving
