@@ -166,28 +166,38 @@ export default function PortionSizesScreen() {
           </Text>
 
           <View style={styles.optionsGrid}>
-            {currentFood.portionOptions.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.portionOption,
-                  selectedPortion === option.label && styles.portionOptionSelected,
-                ]}
-                onPress={() => handleSelectPortion(option)}
-              >
-                <Text
+            {currentFood.portionOptions.map((option, index) => {
+              const isSelected = selectedPortion === option.label;
+              const isRegular = option.label === 'Regular';
+
+              return (
+                <TouchableOpacity
+                  key={index}
                   style={[
-                    styles.portionLabel,
-                    selectedPortion === option.label && styles.portionLabelSelected,
+                    styles.portionOption,
+                    isSelected && styles.portionOptionSelected,
+                    isSelected && isRegular && styles.portionOptionRegularSelected,
                   ]}
+                  onPress={() => handleSelectPortion(option)}
                 >
-                  {option.label}
-                </Text>
-                <Text style={styles.portionCarbs}>
-                  ~{Math.round(currentFood.carbs * option.multiplier)}g
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.portionLabel,
+                      isSelected && styles.portionLabelSelected,
+                      isSelected && isRegular && styles.portionLabelRegularSelected,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  <Text style={[
+                    styles.portionCarbs,
+                    isSelected && isRegular && styles.portionCarbsRegularSelected,
+                  ]}>
+                    ~{Math.round(currentFood.carbs * option.multiplier)}g
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </View>
 
@@ -297,22 +307,24 @@ const styles = StyleSheet.create({
   },
   optionsGrid: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     gap: DesignSystem.Spacing.sm,
   },
   portionOption: {
-    paddingHorizontal: DesignSystem.Spacing.base,
+    flex: 1,
+    paddingHorizontal: DesignSystem.Spacing.sm,
     paddingVertical: DesignSystem.Spacing.md,
     borderRadius: DesignSystem.BorderRadius.lg,
     borderWidth: 2,
     borderColor: Colors.border,
     backgroundColor: Colors.surface,
-    minWidth: '45%',
-    flexGrow: 1,
   },
   portionOptionSelected: {
     borderColor: Colors.accent,
     backgroundColor: Colors.accentSubtle,
+  },
+  portionOptionRegularSelected: {
+    borderColor: Colors.success,
+    backgroundColor: Colors.success,
   },
   portionLabel: {
     ...DesignSystem.Typography.body,
@@ -323,11 +335,18 @@ const styles = StyleSheet.create({
     color: Colors.accentDark,
     fontWeight: '600',
   },
+  portionLabelRegularSelected: {
+    color: '#FFC107', // Yellow text
+    fontWeight: '600',
+  },
   portionCarbs: {
     ...DesignSystem.Typography.caption,
     textAlign: 'center',
     marginTop: 4,
     color: Colors.textSecondary,
+  },
+  portionCarbsRegularSelected: {
+    color: '#FFC107', // Yellow text for carbs too
   },
   infoBox: {
     flexDirection: 'row',
