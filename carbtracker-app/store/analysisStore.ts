@@ -6,6 +6,13 @@ import {
   FinalEstimateResponse,
 } from '@/types/api';
 
+interface PortionSelection {
+  foodId: string;
+  foodName: string;
+  portionLabel: string;
+  multiplier: number;
+}
+
 interface AnalysisState {
   // Current photo being analyzed
   currentImageUri: string | null;
@@ -15,7 +22,11 @@ interface AnalysisState {
   analysisResult: AnalysisResponse | null;
   finalEstimate: FinalEstimateResponse | null;
 
-  // User selections
+  // User selections - NEW FLOW
+  selectedFoodIds: string[];  // IDs of foods selected in multi-select
+  portionSelections: PortionSelection[];  // Portion selections for each food
+
+  // User selections - OLD FLOW (keeping for backwards compatibility)
   foodConfirmations: FoodConfirmation[];
   quickTapAnswers: QuickTapAnswer[];
   manualAdjustment: number;
@@ -24,7 +35,11 @@ interface AnalysisState {
   isAnalyzing: boolean;
   isFinalizing: boolean;
 
-  // Actions
+  // Actions - NEW FLOW
+  setSelectedFoodIds: (ids: string[]) => void;
+  setPortionSelection: (selection: PortionSelection) => void;
+
+  // Actions - OLD FLOW
   setCurrentImage: (uri: string | null) => void;
   setDescription: (desc: string | null) => void;
   setAnalysisResult: (result: AnalysisResponse | null) => void;
@@ -42,6 +57,8 @@ const initialState = {
   description: null,
   analysisResult: null,
   finalEstimate: null,
+  selectedFoodIds: [],
+  portionSelections: [],
   foodConfirmations: [],
   quickTapAnswers: [],
   manualAdjustment: 0,
@@ -59,6 +76,25 @@ export const useAnalysisStore = create<AnalysisState>((set) => ({
   setAnalysisResult: (result) => set({ analysisResult: result }),
 
   setFinalEstimate: (estimate) => set({ finalEstimate: estimate }),
+
+  setSelectedFoodIds: (ids) => set({ selectedFoodIds: ids }),
+
+  setPortionSelection: (selection) =>
+    set((state) => {
+      const existing = state.portionSelections.find(
+        (s) => s.foodId === selection.foodId
+      );
+      if (existing) {
+        return {
+          portionSelections: state.portionSelections.map((s) =>
+            s.foodId === selection.foodId ? selection : s
+          ),
+        };
+      }
+      return {
+        portionSelections: [...state.portionSelections, selection],
+      };
+    }),
 
   setFoodConfirmation: (foodId, selectedName) =>
     set((state) => {

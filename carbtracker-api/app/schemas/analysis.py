@@ -23,11 +23,17 @@ class FoodAlternative(BaseModel):
     carbs: float
 
 
+class PortionOption(BaseModel):
+    label: str
+    multiplier: float  # Multiplier for base carbs (1.0 = base estimate)
+
+
 class FoodItemResponse(BaseModel):
     id: str
     most_likely: FoodAlternative
     alternatives: list[FoodAlternative] = []
     portion: Optional[str] = None
+    portion_options: list[PortionOption] = []  # NEW: Portion size options for this food
 
 
 class PreliminaryEstimate(BaseModel):

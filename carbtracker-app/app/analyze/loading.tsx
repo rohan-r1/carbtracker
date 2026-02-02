@@ -14,7 +14,7 @@ export default function LoadingScreen() {
     if (!isAnalyzing && analysisResult && !hasNavigated.current) {
       hasNavigated.current = true;
       setTimeout(() => {
-        router.replace('/analyze/confirm-foods');
+        router.replace('/analyze/food-selection');
       }, 100);
     }
   }, [isAnalyzing, analysisResult]);

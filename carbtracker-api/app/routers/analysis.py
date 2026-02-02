@@ -21,6 +21,7 @@ from app.schemas.analysis import (
     FinalEstimateRequest,
     FinalEstimateResponse,
     FoodBreakdown,
+    PortionOption,
 )
 from app.services.claude_vision import analyze_meal_image
 from app.services.quick_tap_engine import (
@@ -28,6 +29,7 @@ from app.services.quick_tap_engine import (
     calculate_adjusted_carbs,
 )
 from app.services.r2_storage import upload_image, is_r2_configured
+from app.services.portion_engine import get_portion_options
 
 router = APIRouter()
 
@@ -160,6 +162,9 @@ async def analyze_meal(
                 )
             )
 
+        # Get portion options for this food
+        portion_options = get_portion_options(most_likely.get("name", "Unknown"))
+
         foods_response.append(
             FoodItemResponse(
                 id=str(food_item.id),
@@ -170,6 +175,7 @@ async def analyze_meal(
                 ),
                 alternatives=alternatives_response,
                 portion=most_likely.get("portion"),
+                portion_options=portion_options,
             )
         )
 

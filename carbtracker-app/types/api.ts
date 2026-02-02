@@ -19,11 +19,17 @@ export interface FoodAlternative {
   carbs: number;
 }
 
+export interface PortionOption {
+  label: string;
+  multiplier: number;
+}
+
 export interface FoodItem {
   id: string;
   most_likely: FoodAlternative;
   alternatives: FoodAlternative[];
   portion: string | null;
+  portion_options: PortionOption[];
 }
 
 export interface PreliminaryEstimate {

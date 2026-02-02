@@ -89,6 +89,8 @@ function AdjustmentSlider({
 export default function FinalEstimateScreen() {
   const {
     analysisResult,
+    selectedFoodIds,
+    portionSelections,
     foodConfirmations,
     quickTapAnswers,
     manualAdjustment,
@@ -123,32 +125,58 @@ export default function FinalEstimateScreen() {
     );
   }
 
-  // Calculate total from confirmed foods
+  // Calculate total from portion selections
   const calculateTotal = () => {
     let total = 0;
 
-    analysisResult.foods.forEach((food) => {
-      const confirmation = foodConfirmations.find((c) => c.food_id === food.id);
-      const selectedName = confirmation?.selected_name || food.most_likely.name;
-
-      const allOptions = [food.most_likely, ...food.alternatives];
-      const selected = allOptions.find((o) => o.name === selectedName);
-      total += selected?.carbs || 0;
-    });
-
-    // Add quick-tap adjustments
-    if (analysisResult.quick_tap_questions) {
-      analysisResult.quick_tap_questions.forEach((question) => {
-        const answer = quickTapAnswers.find(
-          (a) => a.question_id === question.id
-        );
-        if (answer) {
-          const option = question.options.find(
-            (o) => o.label === answer.answer
-          );
-          total += option?.carb_adjustment || 0;
-        }
+    // NEW FLOW: Use portion selections
+    if (portionSelections.length > 0) {
+      portionSelections.forEach((selection) => {
+        // Find the base carbs for this food
+        selectedFoodIds.forEach((foodId) => {
+          if (selection.foodId === foodId) {
+            // Find the food in analysis result
+            if (foodId.includes('_alt_')) {
+              const [mainFoodId, , altIndex] = foodId.split('_');
+              const food = analysisResult.foods.find((f) => f.id === mainFoodId);
+              if (food && food.alternatives[parseInt(altIndex)]) {
+                const alt = food.alternatives[parseInt(altIndex)];
+                total += alt.carbs * selection.multiplier;
+              }
+            } else {
+              const food = analysisResult.foods.find((f) => f.id === foodId);
+              if (food) {
+                total += food.most_likely.carbs * selection.multiplier;
+              }
+            }
+          }
+        });
       });
+    } else {
+      // OLD FLOW: Fallback to food confirmations for backwards compatibility
+      analysisResult.foods.forEach((food) => {
+        const confirmation = foodConfirmations.find((c) => c.food_id === food.id);
+        const selectedName = confirmation?.selected_name || food.most_likely.name;
+
+        const allOptions = [food.most_likely, ...food.alternatives];
+        const selected = allOptions.find((o) => o.name === selectedName);
+        total += selected?.carbs || 0;
+      });
+
+      // Add quick-tap adjustments
+      if (analysisResult.quick_tap_questions) {
+        analysisResult.quick_tap_questions.forEach((question) => {
+          const answer = quickTapAnswers.find(
+            (a) => a.question_id === question.id
+          );
+          if (answer) {
+            const option = question.options.find(
+              (o) => o.label === answer.answer
+            );
+            total += option?.carb_adjustment || 0;
+          }
+        });
+      }
     }
 
     // Add manual adjustment
@@ -160,11 +188,16 @@ export default function FinalEstimateScreen() {
   const totalCarbs = calculateTotal();
 
   // Build breakdown
-  const breakdown = analysisResult.foods.map((food) => {
-    const confirmation = foodConfirmations.find((c) => c.food_id === food.id);
-    const selectedName = confirmation?.selected_name || food.most_likely.name;
-    const allOptions = [food.most_likely, ...food.alternatives];
-    const selected = allOptions.find((o) => o.name === selectedName);
+  const breakdown = portionSelections.length > 0
+    ? portionSelections.map((selection) => ({
+        name: `${selection.foodName} (${selection.portionLabel})`,
+        carbs: 0, // Will be calculated
+      }))
+    : analysisResult.foods.map((food) => {
+        const confirmation = foodConfirmations.find((c) => c.food_id === food.id);
+        const selectedName = confirmation?.selected_name || food.most_likely.name;
+        const allOptions = [food.most_likely, ...food.alternatives];
+        const selected = allOptions.find((o) => o.name === selectedName);
 
     return {
       name: selectedName,
