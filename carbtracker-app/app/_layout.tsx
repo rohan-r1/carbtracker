@@ -34,14 +34,14 @@ export default function RootLayout() {
           }}
         />
         <Stack.Screen
-          name="analyze/confirm-foods"
+          name="analyze/food-selection"
           options={{
             presentation: 'card',
             animation: 'slide_from_right',
           }}
         />
         <Stack.Screen
-          name="analyze/quick-tap"
+          name="analyze/portion-sizes"
           options={{
             presentation: 'card',
             animation: 'slide_from_right',
