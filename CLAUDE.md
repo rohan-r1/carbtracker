@@ -436,6 +436,69 @@ When you make product decisions:
 
 ---
 
+## Deployment Workflow
+
+**CRITICAL: Backend is hosted on Railway and requires deployment**
+
+### Current Infrastructure:
+- **Backend API**: Hosted on Railway (auto-deploys from git push)
+- **Frontend**: React Native app runs locally during development via Expo
+- **Database**: PostgreSQL on Railway
+- **Image Storage**: Cloudflare R2
+
+### When Making Code Changes:
+
+**Frontend Changes Only** (carbtracker-app/):
+- Changes hot-reload automatically in Expo during development
+- Press `r` in Expo terminal to manually reload if needed
+- No deployment needed for local testing
+- For production: Build and submit to App Store (Phase 3+)
+
+**Backend Changes** (carbtracker-api/):
+- ⚠️ **ALWAYS deploy to Railway after backend changes**
+- Local changes don't affect the live app until deployed
+- Railway auto-deploys when you push to git
+
+**Deployment Steps:**
+1. Make backend code changes
+2. Test locally if needed (optional):
+   ```bash
+   cd carbtracker-api
+   uvicorn app.main:app --reload
+   # Update frontend api.ts to localhost:8000
+   ```
+3. **Commit and push** (triggers Railway deployment):
+   ```bash
+   git add -A
+   git commit -m "Description of changes"
+   git push
+   ```
+4. **Verify deployment**:
+   - Railway dashboard shows deployment status
+   - Usually takes 1-2 minutes
+   - Test with a new photo analysis to confirm changes
+
+**Changes Requiring Backend Deployment:**
+- Any modifications to `carbtracker-api/` files
+- Prompt changes (claude_vision.py)
+- API endpoint changes
+- Database schema changes
+- Environment variable updates
+
+**Changes NOT Requiring Deployment:**
+- Frontend UI changes
+- React Native component updates
+- Local styling changes
+- Navigation changes
+
+### My Responsibility as Technical Lead:
+- **ALWAYS complete deployment when making backend changes**
+- Don't leave backend changes uncommitted or unpushed
+- Verify Railway deployment succeeds before marking work complete
+- Inform you if deployment fails or needs manual intervention
+
+---
+
 ## Working Agreement
 
 **My commitment:** I will prioritize building something that works and is maintainable over building something "perfect." I will speak up if a decision creates technical risk or user safety issues.
